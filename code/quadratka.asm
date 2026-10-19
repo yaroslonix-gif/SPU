@@ -1,0 +1,125 @@
+CALL main
+STOP
+
+:main
+CALL read_coefs
+CALL calc_roots
+RET
+
+:read_coefs
+IN
+POP AX
+IN
+POP BX
+IN
+POP CX
+RET
+
+:calc_discriminant
+PUSH BX
+PUSH BX
+MUL
+PUSH 4
+PUSH AX
+PUSH CX
+MUL
+MUL
+SUB
+POP DX
+RET
+
+:calc_roots
+PUSH AX
+PUSH 0
+JE coef_a_0
+CALL calc_discriminant
+PUSH DX
+PUSH 0
+JB no_roots
+PUSH DX
+SQRT
+POP DX
+PUSH DX
+PUSH 0
+JE one_root
+PUSH DX
+PUSH 0
+JA two_roots
+RET
+
+:coef_a_0
+PUSH BX
+PUSH 0
+JE coef_b_0
+PUSH -1
+PUSH CX
+MUL
+PUSH BX
+DIV
+PUSH 1
+OUT
+PUSH 10
+OUTC
+OUT
+RET
+
+:coef_b_0
+PUSH CX
+PUSH 0
+JE many_roots
+JMP no_roots
+RET
+
+:no_roots
+PUSH -1
+OUT
+RET
+
+:many_roots
+PUSH 8
+OUT
+RET
+
+:one_root
+PUSH -1
+PUSH BX
+MUL
+PUSH 2
+PUSH AX
+MUL
+DIV
+PUSH 1
+OUT
+PUSH 10
+OUTC
+OUT
+RET
+
+:two_roots
+PUSH -1
+PUSH BX
+MUL
+PUSH DX
+ADD
+PUSH 2
+PUSH AX
+MUL
+DIV
+PUSH -1
+PUSH BX
+MUL
+PUSH DX
+SUB
+PUSH 2
+PUSH AX
+MUL
+DIV
+PUSH 2
+OUT
+PUSH 10
+OUTC
+OUT
+PUSH 10
+OUTC
+OUT
+RET

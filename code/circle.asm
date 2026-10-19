@@ -1,0 +1,154 @@
+CALL main
+STOP
+
+:main
+CALL draw_in_ram
+CALL draw_in_console
+RET
+
+:draw_in_ram
+PUSH 10
+PUSH 10
+POP BX
+POP AX
+PUSH AX
+PUSH BX
+MUL
+POP CX
+
+PUSH 0
+POP OX            ; row = 0
+
+:loop1
+PUSH 0
+POP GX            ; col = 0
+
+:loop2
+; pos = row*10 + col
+PUSH OX
+PUSH AX
+MUL
+PUSH GX
+ADD
+POP FX
+
+; ==== проверка 1: JAE на '*' ====
+PUSH CX
+
+PUSH GX
+PUSH 2
+MUL
+PUSH 9
+SUB
+POP DX
+PUSH DX
+PUSH DX
+MUL
+
+PUSH OX
+PUSH 2
+MUL
+PUSH 9
+SUB
+POP EX
+PUSH EX
+PUSH EX
+MUL
+
+ADD
+JAE draw_m_in_ram
+
+; ==== проверка 2: JB на '.' ====
+PUSH FX
+PUSH CX
+
+PUSH GX
+PUSH 2
+MUL
+PUSH 9
+SUB
+POP DX
+PUSH DX
+PUSH DX
+MUL
+
+PUSH OX
+PUSH 2
+MUL
+PUSH 9
+SUB
+POP EX
+PUSH EX
+PUSH EX
+MUL
+
+ADD
+JB draw_p_in_ram
+
+:draw_m_in_ram
+PUSH 42
+POP [FX]
+JMP loop2_iter
+
+:draw_p_in_ram
+PUSH 46
+POP [FX]
+JMP loop2_iter
+
+:loop2_iter
+PUSH GX
+PUSH 1
+ADD
+POP GX
+PUSH GX
+PUSH AX
+JB loop2
+
+PUSH OX
+PUSH 1
+ADD
+POP OX
+PUSH OX
+PUSH BX
+JB loop1
+
+RET
+
+:draw_in_console
+PUSH 0
+POP OX
+
+:loop1_c
+PUSH 0
+POP GX
+
+:loop2_c
+PUSH OX
+PUSH AX
+MUL
+PUSH GX
+ADD
+POP FX
+
+PUSH [FX]
+OUTC
+
+PUSH GX
+PUSH 1
+ADD
+POP GX
+PUSH GX
+PUSH AX
+JB loop2_c
+
+PUSH OX
+PUSH 1
+ADD
+POP OX
+PUSH OX
+PUSH BX
+PUSH 10
+OUTC
+JB loop1_c
+
+RET
